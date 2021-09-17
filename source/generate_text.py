@@ -23,7 +23,7 @@ def generate_text(mc, dict_length, seed = None, how_many = 1, how_much = None, d
     
     # fix how_much
     if how_much == None:
-        how_much = "word"
+        how_much = 2
     how_much = parse_how_much(how_much)
 
     # fix seed
@@ -82,7 +82,7 @@ def generator_internal(mc, seed, how_many, how_much):
     string = str(seed)
     num_found = 0
     while num_found < how_many:
-        next_index = choose_next(mc[seed])
+        next_index = choose_index(mc[seed])
         mc[seed][next_index]+=1
         if how_much == 0:
             num_found += 1
@@ -220,20 +220,18 @@ def parse_how_much(how_much):
             for i in range(6):
                 if len(how_much) <= len(options[i]) \
                    and how_much == options[i][0:len(how_much)]:
-                    raise Exception('hme', 'pass')
+                    return i
             raise Exception('hme', 'fail', 'bad word')
         else:
             raise Exception('hme', 'fail', 'not int or str')
     except Exception as out:
         a = out.args
-        if a[0] and a[0] == 'hme':
+        if len(a)==3 and a[0] == 'hme':
             if not a[1]:
                 raise out
             elif a[1] == 'fail':
                 print('error in parse_how_much: ', a[2], '\n', how_much)
                 raise out
-            elif a[1] == 'pass':
-                return how_much
             else:
                 raise out
         else:

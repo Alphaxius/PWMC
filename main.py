@@ -13,48 +13,10 @@ def help_user():
     print ("Number Unit (Seed) or complete text mode (start with !)")
 
 def main():
-    if input("Refresh dictionary? (y/N): ") == 'y':
-        cvj()
-        vbt()
-    (n, mc) = lmc()
-    help_user()
-    while True:
-        user = input()
-        if len(user) > 0:
-            if user[0] == '!' and len(user) > 1:
-                gt(mc, n, user[1:], 1, 4)
-            else:
-                user = user.split()
-                if len(user) == 2:
-                    try:
-                        user[0] = int(user[0])
-                    except ValueError:
-                        print(user[0])
-                        continue
-                    k = list(mc.keys())
-                    seed = randint(0,len(k))
-                    try:
-                        gt(mc, n, seed, user[0], user[1])
-                    except Exception as problem: 
-                        print(problem)
-                        print(problem.args)
-                        print(user[1])
-                        raise problem
-                elif len(user) == 3:
-                    try:
-                        user[0] = int(user[0])
-                    except ValueError:
-                        print(user[0])
-                        continue
-                    try:
-                        gt(mc, n, user[2], user[0], user[1])
-                    except Exception as problem: 
-                        print(problem)
-                        print(problem.args)
-                        print(user[1])
-                        raise problem
-                    
-                        
+    vbt('.')
+    cvj(10, path='.')
+    (n, mc) = lmc(path='.')
+    print( gt(mc, n) )
 
 if __name__ == "__main__":
     main()

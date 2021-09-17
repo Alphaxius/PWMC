@@ -1,8 +1,10 @@
 
 
 # Verify that base_text.txt is sanitized.
-def verify_base_text():
-    with open("base_text.txt", 'r', encoding = 'utf-8') as f:
+def verify_base_text(path = None):
+    if path == None:
+        path = ".."
+    with open(path+"/resources/base_text.txt", 'r', encoding = 'utf-8') as f:
         is_good = True
         ls = f.readlines()
         for l in ls:
