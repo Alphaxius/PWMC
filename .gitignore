@@ -1,2 +1,6 @@
 
 resources/mc.json
+.vscode/settings.json
+setup.py
+*.pyc
+venv

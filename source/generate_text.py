@@ -29,6 +29,7 @@ def generate_text(mc, dict_length, seed = None, how_many = 1, how_much = None, d
     # fix seed
     if seed == None:
         seed = 'Hello there, general Kenobi'
+    old_seed = seed
     seed = fix_seed(seed, mc, dict_length, depth)
     # if small, it is known that there are no super matches,
     # and that there are no right-justified super matches of the given depth
@@ -52,10 +53,14 @@ def generate_text(mc, dict_length, seed = None, how_many = 1, how_much = None, d
         string = p_generator(mc, seed, how_many)
     else:
         string = e_generator(mc, seed, how_many)
-    return string
+    return combine(old_seed, string)
 
 '''
-
+e_generator uses p_generator to create essays
+takes mc, the markov chain dictionary
+takes seed, the starting string
+takes how_many, the number of essays to generate
+returns how_many number of essays
 '''
 def e_generator(mc, seed, how_many):
     string = ''
@@ -66,7 +71,11 @@ def e_generator(mc, seed, how_many):
 
 
 '''
-
+p_generator uses generator_internal to create paragraphs of a random length
+takes mc, the markov chain dictionary
+takes seed, the starting string
+takes how_many, the number of paragraphs to generate
+returns how_many number of paragraphs
 '''
 def p_generator(mc, seed, how_many):
     string = ''
@@ -77,6 +86,14 @@ def p_generator(mc, seed, how_many):
 
 
 '''
+generator_internal is the main function to create text, loops are required to
+produce the required amount of text
+takes mc, the markov chain dictionary
+takes seed, the starting string
+takes how_many, the number of things to generate,
+takes how_much, using the same table: up to 3 / sentences
+increases the dictionary when a character is found by 50.
+returns the desired amount of text
 '''
 def generator_internal(mc, seed, how_many, how_much):
     string = str(seed)
@@ -99,13 +116,35 @@ def generator_internal(mc, seed, how_many, how_much):
         seed.replace(seed[0],'')
         seed += chr(next_index+32)
         try:
-            mc[seed] += 1
+            mc[seed] += 50
         except KeyError:
             mc[seed] = [1]*95
     return string
 
 
 '''
+combine attempts to overlap two strings
+takes left_string and right_string, the strings to combine
+returns a new string which contains the left_string in entirety,
+    and the right_string with left characters removed until the overlap would
+    not be duplicated. If there is no overlap, simply concatenates.
+'''
+def combine(left_string, right_string):
+    min_len = len(left_string) if len(left_string) < len(right_string) \
+        else len(right_string)
+
+    for i in range(1, min_len):
+        if left_string[-i:] == right_string[0:i]:
+            return left_string + right_string[i:]
+    return left_string + right_string
+    
+
+'''
+find_key looks for an appropriate key from the list of keys in the dictionary
+takes seed as the string to start with
+takes mc as the markov chain dictionary
+takes depth as the maximum number of left characters to ignore
+returns either a key from the dictionary or False if no matching key exists
 '''
 def find_key(seed, mc, depth):
     ls = len(seed)
@@ -117,6 +156,13 @@ def find_key(seed, mc, depth):
 
 
 # very dumb, needs improvement
+'''
+increase_seed puts random characters in front of a seed until the length
+is equal to length_required
+takes seed as the starting string
+takes length_required as the desired string length
+returns a new string for len(string) == length_required
+'''
 def increase_seed(seed, length_required):
     for _ in range(length_required-len(seed)):
         seed = chr(randint(32,126)) + seed
@@ -207,36 +253,34 @@ returns int or throws error
 def parse_how_much(how_much):
     try:
         if type(how_much) == int:
-            if 0 <= how_much <= 4:
+            if 0 <= how_much <= 5:
                 return how_much
             else:
-                raise Exception('hme', 'fail', 'out of bounds')
+                raise Exception('hme', 'fail', 'Out of Bounds')
         elif type(how_much) == str:
+            if len(how_much) == 0:
+                raise Exception('hme', 'fail', 'Empty String')
             how_much = how_much.lower()
             if len(how_much) != 1 and how_much[-1] == 's':
-                how_much[-1] = ''
+                how_much = how_much[:-1]
             
             options = ["character","letter","word","sentence","paragraph","essay"]
             for i in range(6):
                 if len(how_much) <= len(options[i]) \
                    and how_much == options[i][0:len(how_much)]:
                     return i
-            raise Exception('hme', 'fail', 'bad word')
+            raise Exception('hme', 'fail', 'Bad String')
         else:
-            raise Exception('hme', 'fail', 'not int or str')
+            raise Exception('hme', 'fail', 'Not Int or String')
     except Exception as out:
         a = out.args
         if len(a)==3 and a[0] == 'hme':
             if not a[1]:
                 raise out
             elif a[1] == 'fail':
-                print('error in parse_how_much: ', a[2], '\n', how_much)
-                raise out
+                raise Exception(out.args[2])
             else:
                 raise out
         else:
             raise out
             
-            
-
-    

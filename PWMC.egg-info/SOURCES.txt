@@ -1,0 +1,12 @@
+README.md
+setup.py
+PWMC.egg-info/PKG-INFO
+PWMC.egg-info/SOURCES.txt
+PWMC.egg-info/dependency_links.txt
+PWMC.egg-info/top_level.txt
+source/__init__.py
+source/convert_to_json.py
+source/generate_text.py
+source/verify_base_text.py
+tests/TEST_parse_how_much.py
+tests/__init__.py

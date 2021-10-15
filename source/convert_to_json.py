@@ -35,7 +35,7 @@ def convert_to_json(n = 4, nowrite = False, path = None):
                 except KeyError:
                     mc[current_string] = list(default_list)
                 try:
-                    mc[current_string][ord(l[i])-32]+=1
+                    mc[current_string][ord(l[i])-32]+=100
                 except IndexError as err:
                     print(f"error at {i} -- {l[i]} : {ord(l[i])-32}\n")
                     raise err
